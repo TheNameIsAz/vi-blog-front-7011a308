@@ -5,8 +5,10 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ArticleCard from '../components/ArticleCard';
 import SearchBar from '../components/SearchBar';
+import PaginationComponent from '../components/PaginationComponent';
 import { Article } from '../types/article';
 import { searchArticles } from '../services/articleService';
+import { usePagination } from '../hooks/usePagination';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,12 +17,27 @@ const Search = () => {
   const [hasSearched, setHasSearched] = useState(false);
   
   const query = searchParams.get('q') || '';
+  const currentPageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedResults,
+    setCurrentPage
+  } = usePagination({ items: results, itemsPerPage: 10 });
 
   useEffect(() => {
     if (query) {
       performSearch(query);
     }
   }, [query]);
+
+  // Synchroniser la page avec l'URL
+  useEffect(() => {
+    if (currentPageFromUrl !== currentPage) {
+      setCurrentPage(currentPageFromUrl);
+    }
+  }, [currentPageFromUrl, currentPage, setCurrentPage]);
 
   const performSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
@@ -44,11 +61,28 @@ const Search = () => {
   };
 
   const handleSearch = (searchQuery: string) => {
+    const newParams = new URLSearchParams();
     if (searchQuery) {
-      setSearchParams({ q: searchQuery });
-    } else {
-      setSearchParams({});
+      newParams.set('q', searchQuery);
     }
+    // Reset page when new search
+    newParams.delete('page');
+    setSearchParams(newParams);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (page === 1) {
+        newParams.delete('page');
+      } else {
+        newParams.set('page', page.toString());
+      }
+      return newParams;
+    });
+    // Scroll to top when changing page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -69,6 +103,15 @@ const Search = () => {
             isLoading={false}
             className="max-w-md mx-auto"
           />
+          
+          {hasSearched && (
+            <div className="mt-6 text-blue-100">
+              {results.length} résultat{results.length > 1 ? 's' : ''} trouvé{results.length > 1 ? 's' : ''} pour "{query}"
+              {totalPages > 1 && (
+                <span className="ml-4">• Page {currentPage} sur {totalPages}</span>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -81,31 +124,33 @@ const Search = () => {
           </div>
         ) : hasSearched ? (
           <>
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Résultats pour "{query}"
-              </h2>
-              <p className="text-gray-600">
-                {results.length} résultat{results.length > 1 ? 's' : ''} trouvé{results.length > 1 ? 's' : ''}
-              </p>
-            </div>
-            
-            {results.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {results.map((article) => (
-                  <ArticleCard
-                    key={article.id}
-                    id={article.slug}
-                    title={article.title}
-                    excerpt={article.excerpt}
-                    author={article.author}
-                    publishDate={article.publishDate}
-                    readTime={article.readTime}
-                    category={article.category}
-                    image={article.image}
+            {paginatedResults.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                  {paginatedResults.map((article) => (
+                    <ArticleCard
+                      key={article.id}
+                      id={article.slug}
+                      title={article.title}
+                      excerpt={article.excerpt}
+                      author={article.author}
+                      publishDate={article.publishDate}
+                      readTime={article.readTime}
+                      category={article.category}
+                      image={article.image}
+                    />
+                  ))}
+                </div>
+                
+                {totalPages > 1 && (
+                  <PaginationComponent
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    className="justify-center"
                   />
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-16">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
