@@ -1,12 +1,132 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import Header from '../components/Header';
+import ArticleCard from '../components/ArticleCard';
+import Footer from '../components/Footer';
+import { articles } from '../data/articles';
+import { Search, TrendingUp, Clock, Star } from 'lucide-react';
 
 const Index = () => {
+  const featuredArticle = articles[0];
+  const recentArticles = articles.slice(1);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              Explorez le monde du
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent"> développement</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Découvrez les dernières tendances, tutoriels et conseils pour devenir un développeur d'exception
+            </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  type="text"
+                  placeholder="Rechercher un article..."
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30"
+                />
+              </div>
+            </div>
+            
+            {/* Stats */}
+            <div className="flex justify-center items-center space-x-8 text-sm">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="h-4 w-4" />
+                <span>{articles.length} articles</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4" />
+                <span>Mis à jour quotidiennement</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Star className="h-4 w-4" />
+                <span>Contenu premium</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Article */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+          <div className="md:flex">
+            <div className="md:w-1/2">
+              <div className="h-64 md:h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                <div className="text-6xl font-bold text-blue-200">
+                  {featuredArticle.title.charAt(0).toUpperCase()}
+                </div>
+              </div>
+            </div>
+            <div className="md:w-1/2 p-8">
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="bg-blue-100 text-blue-600 text-xs font-medium px-2 py-1 rounded-full">
+                  Article featured
+                </span>
+                <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+                  {featuredArticle.category}
+                </span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                {featuredArticle.title}
+              </h2>
+              <p className="text-gray-600 mb-6">
+                {featuredArticle.excerpt}
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  Par {featuredArticle.author} • {featuredArticle.publishDate}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {featuredArticle.readTime} de lecture
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Articles Grid */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Articles récents</h2>
+          <div className="flex items-center space-x-4">
+            <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option>Tous les sujets</option>
+              <option>Développement</option>
+              <option>UX/UI</option>
+              <option>Outils</option>
+              <option>Design</option>
+            </select>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recentArticles.map((article) => (
+            <ArticleCard
+              key={article.id}
+              id={article.id}
+              title={article.title}
+              excerpt={article.excerpt}
+              author={article.author}
+              publishDate={article.publishDate}
+              readTime={article.readTime}
+              category={article.category}
+            />
+          ))}
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
