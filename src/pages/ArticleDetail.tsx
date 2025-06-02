@@ -1,13 +1,55 @@
 
 import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Clock, User, Tag, Share2, Bookmark, Heart } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getArticleById } from '../data/articles';
+import { Article } from '../types/article';
+import { getArticleBySlug } from '../services/articleService';
 
 const ArticleDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const article = id ? getArticleById(id) : undefined;
+  const { slug } = useParams<{ slug: string }>();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadArticle = async () => {
+      if (!slug) return;
+      
+      setIsLoading(true);
+      try {
+        const foundArticle = await getArticleBySlug(slug);
+        setArticle(foundArticle || null);
+      } catch (error) {
+        console.error('Erreur lors du chargement de l\'article:', error);
+        setArticle(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArticle();
+  }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -113,16 +155,24 @@ const ArticleDetail = () => {
         {/* Article Image */}
         <div className="mb-12">
           <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center">
-            <div className="text-8xl font-bold text-blue-200">
-              {article.title.charAt(0).toUpperCase()}
-            </div>
+            {article.image ? (
+              <img 
+                src={article.image} 
+                alt={article.title}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            ) : (
+              <div className="text-8xl font-bold text-blue-200">
+                {article.title.charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none">
           <div 
-            className="text-gray-700 leading-relaxed [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:text-gray-700 [&>p]:leading-relaxed"
+            className="text-gray-700 leading-relaxed [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-900 [&>h1]:mt-8 [&>h1]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:text-gray-700 [&>p]:leading-relaxed [&>ul]:mb-4 [&>li]:mb-2"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>

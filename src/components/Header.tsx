@@ -1,11 +1,29 @@
 
-import { Link, useLocation } from 'react-router-dom';
-import { PenTool, Home, User, Search } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { PenTool, Home, User, Search, ChevronDown } from 'lucide-react';
+import { getCategories } from '../services/articleService';
+import { CategoryInfo } from '../types/article';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState<CategoryInfo[]>([]);
+  const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
   
   const isActive = (path: string) => location.pathname === path;
+  
+  useEffect(() => {
+    const loadCategories = async () => {
+      const cats = getCategories();
+      setCategories(cats);
+    };
+    loadCategories();
+  }, []);
+
+  const handleSearchClick = () => {
+    navigate('/search');
+  };
   
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
@@ -28,6 +46,41 @@ const Header = () => {
               <Home className="h-4 w-4" />
               <span>Accueil</span>
             </Link>
+
+            {/* Menu déroulant Catégories */}
+            <div className="relative">
+              <button 
+                onMouseEnter={() => setShowCategoriesMenu(true)}
+                onMouseLeave={() => setShowCategoriesMenu(false)}
+                className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <span>Catégories</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              
+              {showCategoriesMenu && (
+                <div 
+                  className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                  onMouseEnter={() => setShowCategoriesMenu(true)}
+                  onMouseLeave={() => setShowCategoriesMenu(false)}
+                >
+                  {categories.map((category) => (
+                    <Link
+                      key={category.slug}
+                      to={`/category/${category.slug}`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{category.name}</span>
+                        <span className="text-xs text-gray-500">{category.count}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">{category.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Link 
               to="/about" 
               className={`flex items-center space-x-1 text-sm font-medium transition-colors hover:text-blue-600 ${
@@ -37,7 +90,13 @@ const Header = () => {
               <User className="h-4 w-4" />
               <span>À propos</span>
             </Link>
-            <button className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+            
+            <button 
+              onClick={handleSearchClick}
+              className={`flex items-center space-x-1 text-sm font-medium transition-colors hover:text-blue-600 ${
+                location.pathname.startsWith('/search') ? 'text-blue-600' : 'text-gray-700'
+              }`}
+            >
               <Search className="h-4 w-4" />
               <span>Rechercher</span>
             </button>
