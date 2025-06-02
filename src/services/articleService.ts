@@ -1,5 +1,6 @@
 
 import { Article, ArticleMeta, CategoryInfo } from '../types/article';
+import { getAuthorById } from './authorService';
 
 // Configuration des catégories
 const CATEGORIES: Record<string, CategoryInfo> = {
@@ -28,6 +29,30 @@ const CATEGORIES: Record<string, CategoryInfo> = {
     count: 0
   }
 };
+
+// Articles statiques pour la démo
+const STATIC_ARTICLES = [
+  {
+    category: 'developpement',
+    slug: 'tendances-dev-2024',
+    filePath: '/content/developpement/tendances-dev-2024.md'
+  },
+  {
+    category: 'design',
+    slug: 'design-system-guide',
+    filePath: '/content/design/design-system-guide.md'
+  },
+  {
+    category: 'outils',
+    slug: 'vscode-extensions-2024',
+    filePath: '/content/outils/vscode-extensions-2024.md'
+  },
+  {
+    category: 'securite',
+    slug: 'securite-web-2024',
+    filePath: '/content/securite/securite-web-2024.md'
+  }
+];
 
 // Cache pour les articles
 let articlesCache: Article[] = [];
@@ -73,94 +98,74 @@ function markdownToHtml(markdown: string): string {
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*)\*/gim, '<em>$1</em>')
+    .replace(/```(\w+)?\n([\s\S]*?)\n```/gim, '<pre><code class="language-$1">$2</code></pre>')
+    .replace(/`([^`]+)`/gim, '<code>$1</code>')
     .replace(/^\* (.*$)/gim, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>')
+    .replace(/<\/ul>\s*<ul>/gim, '')
+    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gims, '<ol>$1</ol>')
+    .replace(/<\/ol>\s*<ol>/gim, '')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\n\n/gim, '</p><p>')
-    .replace(/^(?!<[h|u|l])/gim, '<p>')
+    .replace(/^(?!<[h|u|o|l|p|c])/gim, '<p>')
     .replace(/$/gim, '</p>')
-    .replace(/<p><\/p>/gim, '');
+    .replace(/<p><\/p>/gim, '')
+    .replace(/<p>(<[h|u|o|l])/gim, '$1')
+    .replace(/(<\/[h|u|o|l].*>)<\/p>/gim, '$1');
 }
 
-// Charge les articles depuis le localStorage (simulant le chargement des fichiers)
-async function loadArticlesFromStorage(): Promise<Article[]> {
-  // En production, ceci serait remplacé par un vrai chargement de fichiers
-  // Pour la démo, on utilise des articles exemple
-  const sampleArticles = [
-    {
-      category: 'developpement',
-      slug: 'tendances-dev-2024',
-      content: `---
-title: Les tendances du développement web en 2024
-excerpt: Découvrez les technologies et frameworks qui façonnent l'avenir du développement web cette année.
-author: Marie Dubois
-publishDate: 15 Mai 2024
-readTime: 5 min
-category: Développement
-tags: React, TypeScript, Performance, Tendances
----
-
-# L'évolution constante du développement web
-
-Le monde du développement web ne cesse d'évoluer, et 2024 ne fait pas exception. Cette année marque un tournant important avec l'émergence de nouvelles technologies et l'évolution des pratiques existantes.
-
-## React et l'écosystème moderne
-
-React continue de dominer le paysage du développement frontend, avec des améliorations constantes et un écosystème toujours plus riche. Les Server Components et la nouvelle architecture concurrent mode changent la donne.
-
-## L'essor de TypeScript
-
-TypeScript s'impose comme un standard incontournable, offrant une meilleure expérience de développement et une maintenance facilitée des applications complexes.`
-    },
-    {
-      category: 'design',
-      slug: 'design-system-guide',
-      content: `---
-title: Design System : créer une cohérence visuelle
-excerpt: Les étapes clés pour mettre en place un design system efficace dans votre organisation.
-author: Alexandre Petit
-publishDate: 8 Mai 2024
-readTime: 7 min
-category: Design
-tags: Design System, UI, Composants, Organisation
----
-
-# L'importance d'un Design System
-
-Un design system bien conçu assure la cohérence visuelle et améliore l'efficacité des équipes de développement et de design.
-
-## Composants réutilisables
-
-La création de composants réutilisables permet de maintenir la cohérence tout en accélérant le développement.`
+// Charge un article depuis le filesystem
+async function loadArticleFromFile(filePath: string, slug: string, category: string): Promise<Article> {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+      throw new Error(`Failed to load article: ${filePath}`);
     }
-  ];
-
-  const articles: Article[] = [];
-  
-  for (const sample of sampleArticles) {
-    try {
-      const { meta, content } = parseFrontMatter(sample.content);
-      const htmlContent = markdownToHtml(content);
-      
-      articles.push({
-        ...meta,
-        id: sample.slug,
-        slug: sample.slug,
-        content: htmlContent,
-        filePath: `content/${sample.category}/${sample.slug}.md`
-      });
-    } catch (error) {
-      console.error(`Erreur lors du parsing de l'article ${sample.slug}:`, error);
-    }
+    
+    const content = await response.text();
+    const { meta, content: markdownContent } = parseFrontMatter(content);
+    const htmlContent = markdownToHtml(markdownContent);
+    
+    // Récupérer les informations de l'auteur
+    const author = await getAuthorById(meta.author);
+    const authorName = author ? author.fullName : meta.author;
+    
+    return {
+      ...meta,
+      author: authorName,
+      id: slug,
+      slug,
+      content: htmlContent,
+      filePath,
+      category: meta.category || CATEGORIES[category]?.name || category
+    };
+  } catch (error) {
+    console.error(`Erreur lors du chargement de l'article ${slug}:`, error);
+    throw error;
   }
-
-  return articles;
 }
 
 // Initialise le cache des articles
 async function initializeCache(): Promise<void> {
   if (cacheInitialized) return;
   
-  articlesCache = await loadArticlesFromStorage();
+  const articles: Article[] = [];
+  
+  for (const articleInfo of STATIC_ARTICLES) {
+    try {
+      const article = await loadArticleFromFile(
+        articleInfo.filePath, 
+        articleInfo.slug, 
+        articleInfo.category
+      );
+      articles.push(article);
+    } catch (error) {
+      console.error(`Erreur lors du chargement de l'article ${articleInfo.slug}:`, error);
+    }
+  }
+  
+  articlesCache = articles;
   cacheInitialized = true;
   
   // Met à jour le compteur de catégories

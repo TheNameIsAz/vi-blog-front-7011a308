@@ -4,12 +4,16 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Clock, User, Tag, Share2, Bookmark, Heart } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import AuthorCard from '../components/AuthorCard';
 import { Article } from '../types/article';
+import { Author } from '../types/author';
 import { getArticleBySlug } from '../services/articleService';
+import { getAuthorById } from '../services/authorService';
 
 const ArticleDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
+  const [author, setAuthor] = useState<Author | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -20,9 +24,28 @@ const ArticleDetail = () => {
       try {
         const foundArticle = await getArticleBySlug(slug);
         setArticle(foundArticle || null);
+        
+        // Charger les informations de l'auteur si l'article existe
+        if (foundArticle) {
+          // Extraire l'ID de l'auteur depuis le front matter de l'article
+          const response = await fetch(foundArticle.filePath);
+          const content = await response.text();
+          const frontMatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+          
+          if (frontMatterMatch) {
+            const frontMatter = frontMatterMatch[1];
+            const authorMatch = frontMatter.match(/author:\s*(.+)/);
+            if (authorMatch) {
+              const authorId = authorMatch[1].trim();
+              const authorData = await getAuthorById(authorId);
+              setAuthor(authorData || null);
+            }
+          }
+        }
       } catch (error) {
         console.error('Erreur lors du chargement de l\'article:', error);
         setArticle(null);
+        setAuthor(null);
       } finally {
         setIsLoading(false);
       }
@@ -172,7 +195,7 @@ const ArticleDetail = () => {
         {/* Article Content */}
         <div className="prose prose-lg max-w-none">
           <div 
-            className="text-gray-700 leading-relaxed [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-900 [&>h1]:mt-8 [&>h1]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:text-gray-700 [&>p]:leading-relaxed [&>ul]:mb-4 [&>li]:mb-2"
+            className="text-gray-700 leading-relaxed [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-900 [&>h1]:mt-8 [&>h1]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:text-gray-700 [&>p]:leading-relaxed [&>ul]:mb-4 [&>li]:mb-2 [&>ol]:mb-4 [&>code]:bg-gray-100 [&>code]:px-1 [&>code]:py-0.5 [&>code]:rounded [&>code]:text-sm [&>pre]:bg-gray-900 [&>pre]:text-white [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-blue-500 [&>blockquote]:pl-4 [&>blockquote]:italic [&>a]:text-blue-600 [&>a]:underline [&>a]:hover:text-blue-800"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>
@@ -188,6 +211,14 @@ const ArticleDetail = () => {
               </span>
             ))}
           </div>
+          
+          {/* Author Section */}
+          {author && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">À propos de l'auteur</h3>
+              <AuthorCard author={author} />
+            </div>
+          )}
           
           {/* Share Section */}
           <div className="bg-gray-100 rounded-lg p-6 text-center">
