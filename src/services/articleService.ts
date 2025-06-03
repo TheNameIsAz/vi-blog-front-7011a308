@@ -60,15 +60,20 @@ let cacheInitialized = false;
 
 // Parse le front matter d'un fichier markdown
 function parseFrontMatter(content: string): { meta: ArticleMeta; content: string } {
+  console.log('Parsing content, first 200 chars:', content.substring(0, 200));
+  
   const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
   const match = content.match(frontMatterRegex);
   
   if (!match) {
+    console.error('No front matter found. Content preview:', content.substring(0, 500));
     throw new Error('Invalid markdown format: missing front matter');
   }
 
   const frontMatter = match[1];
   const markdownContent = match[2];
+  
+  console.log('Front matter found:', frontMatter);
   
   // Parse YAML-like front matter
   const meta: Partial<ArticleMeta> = {};
@@ -83,6 +88,8 @@ function parseFrontMatter(content: string): { meta: ArticleMeta; content: string
       }
     }
   });
+
+  console.log('Parsed meta:', meta);
 
   return {
     meta: meta as ArticleMeta,
@@ -118,12 +125,17 @@ function markdownToHtml(markdown: string): string {
 // Charge un article depuis le filesystem
 async function loadArticleFromFile(filePath: string, slug: string, category: string): Promise<Article> {
   try {
+    console.log(`Loading article from: ${filePath}`);
     const response = await fetch(filePath);
+    console.log(`Response status: ${response.status}`);
+    
     if (!response.ok) {
-      throw new Error(`Failed to load article: ${filePath}`);
+      throw new Error(`Failed to load article: ${filePath} (${response.status})`);
     }
     
     const content = await response.text();
+    console.log(`Content length: ${content.length}`);
+    
     const { meta, content: markdownContent } = parseFrontMatter(content);
     const htmlContent = markdownToHtml(markdownContent);
     
@@ -131,7 +143,7 @@ async function loadArticleFromFile(filePath: string, slug: string, category: str
     const author = await getAuthorById(meta.author);
     const authorName = author ? author.fullName : meta.author;
     
-    return {
+    const article = {
       ...meta,
       author: authorName,
       id: slug,
@@ -140,6 +152,9 @@ async function loadArticleFromFile(filePath: string, slug: string, category: str
       filePath,
       category: meta.category || CATEGORIES[category]?.name || category
     };
+    
+    console.log(`Successfully loaded article: ${article.title}`);
+    return article;
   } catch (error) {
     console.error(`Erreur lors du chargement de l'article ${slug}:`, error);
     throw error;
@@ -150,6 +165,7 @@ async function loadArticleFromFile(filePath: string, slug: string, category: str
 async function initializeCache(): Promise<void> {
   if (cacheInitialized) return;
   
+  console.log('Initializing articles cache...');
   const articles: Article[] = [];
   
   for (const articleInfo of STATIC_ARTICLES) {
@@ -167,6 +183,8 @@ async function initializeCache(): Promise<void> {
   
   articlesCache = articles;
   cacheInitialized = true;
+  
+  console.log(`Cache initialized with ${articles.length} articles:`, articles.map(a => a.title));
   
   // Met à jour le compteur de catégories
   Object.keys(CATEGORIES).forEach(categorySlug => {

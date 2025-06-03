@@ -18,7 +18,9 @@ const Index = () => {
   useEffect(() => {
     const loadArticles = async () => {
       try {
+        console.log('Loading articles...');
         const allArticles = await getAllArticles();
+        console.log('Articles loaded:', allArticles.length, allArticles);
         setArticles(allArticles);
       } catch (error) {
         console.error('Erreur lors du chargement des articles:', error);
@@ -55,6 +57,14 @@ const Index = () => {
     : recentArticles.filter(article => 
         article.category.toLowerCase() === selectedCategory
       );
+
+  console.log('Render state:', {
+    totalArticles: articles.length,
+    featuredArticle: featuredArticle?.title,
+    recentArticles: recentArticles.length,
+    filteredArticles: filteredArticles.length,
+    selectedCategory
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -174,30 +184,30 @@ const Index = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredArticles.map((article) => (
-            <ArticleCard
-              key={article.id}
-              id={article.slug}
-              title={article.title}
-              excerpt={article.excerpt}
-              author={article.author}
-              publishDate={article.publishDate}
-              readTime={article.readTime}
-              category={article.category}
-              image={article.image}
-            />
-          ))}
-        </div>
-
-        {filteredArticles.length === 0 && selectedCategory !== 'all' && (
+        {filteredArticles.length === 0 ? (
           <div className="text-center py-16">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Aucun article dans cette catégorie
+              {articles.length === 0 ? 'Chargement des articles...' : 'Aucun article dans cette catégorie'}
             </h3>
             <p className="text-gray-600">
-              Revenez bientôt pour découvrir de nouveaux contenus !
+              {articles.length === 0 ? 'Veuillez patienter.' : 'Revenez bientôt pour découvrir de nouveaux contenus !'}
             </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArticles.map((article) => (
+              <ArticleCard
+                key={article.id}
+                id={article.slug}
+                title={article.title}
+                excerpt={article.excerpt}
+                author={article.author}
+                publishDate={article.publishDate}
+                readTime={article.readTime}
+                category={article.category}
+                image={article.image}
+              />
+            ))}
           </div>
         )}
       </section>
