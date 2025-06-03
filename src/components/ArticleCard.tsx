@@ -74,7 +74,7 @@ const ArticleCard = ({
         
         {/* Read more link */}
         <Link 
-          to={`/article/${id}`}
+          to={`/${id}`}
           className="inline-flex items-center space-x-2 text-blue-600 font-medium hover:text-blue-700 transition-colors group"
         >
           <span>Lire la suite</span>

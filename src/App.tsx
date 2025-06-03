@@ -11,6 +11,7 @@ import ArticleDetail from "./pages/ArticleDetail";
 import Category from "./pages/Category";
 import Search from "./pages/Search";
 import Sitemap from "./pages/Sitemap";
+import Tag from "./pages/Tag";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,10 +23,11 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/about" element={<About />} />
-      <Route path="/article/:slug" element={<ArticleDetail />} />
       <Route path="/category/:categorySlug" element={<Category />} />
       <Route path="/search" element={<Search />} />
       <Route path="/sitemap.xml" element={<Sitemap />} />
+      <Route path="/tag/:tagSlug" element={<Tag />} />
+      <Route path="/:categorySlug/:articleSlug" element={<ArticleDetail />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

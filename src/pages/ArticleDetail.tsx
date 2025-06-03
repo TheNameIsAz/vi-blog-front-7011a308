@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Clock, User, Tag, Share2, Bookmark, Heart } from 'lucide-react';
@@ -11,18 +10,18 @@ import { getArticleBySlug } from '../services/articleService';
 import { getAuthorById } from '../services/authorService';
 
 const ArticleDetail = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { categorySlug, articleSlug } = useParams<{ categorySlug: string; articleSlug: string }>();
   const [article, setArticle] = useState<Article | null>(null);
   const [author, setAuthor] = useState<Author | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadArticle = async () => {
-      if (!slug) return;
+      if (!articleSlug) return;
       
       setIsLoading(true);
       try {
-        const foundArticle = await getArticleBySlug(slug);
+        const foundArticle = await getArticleBySlug(articleSlug);
         setArticle(foundArticle || null);
         
         // Charger les informations de l'auteur si l'article existe
@@ -52,7 +51,7 @@ const ArticleDetail = () => {
     };
 
     loadArticle();
-  }, [slug]);
+  }, [articleSlug]);
 
   if (isLoading) {
     return (
@@ -118,9 +117,13 @@ const ArticleDetail = () => {
               {article.category}
             </span>
             {article.tags.map((tag) => (
-              <span key={tag} className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">
+              <Link
+                key={tag}
+                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
+              >
                 {tag}
-              </span>
+              </Link>
             ))}
           </div>
           
@@ -206,9 +209,13 @@ const ArticleDetail = () => {
             <Tag className="h-4 w-4 text-gray-400" />
             <span className="text-sm text-gray-500 mr-2">Tags:</span>
             {article.tags.map((tag) => (
-              <span key={tag} className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors cursor-pointer">
+              <Link
+                key={tag}
+                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
+              >
                 {tag}
-              </span>
+              </Link>
             ))}
           </div>
           

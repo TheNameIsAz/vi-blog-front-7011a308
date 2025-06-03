@@ -1,4 +1,3 @@
-
 import { getAllArticles, getCategories } from './articleService';
 
 interface SitemapUrl {
@@ -54,14 +53,32 @@ export async function generateSitemap(): Promise<string> {
       });
     });
 
-    // Articles
+    // Articles avec nouvelle structure d'URL
     const articles = await getAllArticles();
     articles.forEach(article => {
+      const categorySlug = article.category.toLowerCase().replace(/\s+/g, '-');
       urls.push({
-        loc: `${BASE_URL}/article/${article.slug}`,
+        loc: `${BASE_URL}/${categorySlug}/${article.slug}`,
         lastmod: now,
         changefreq: 'monthly',
         priority: '0.9'
+      });
+    });
+
+    // Tags
+    const allTags = new Set<string>();
+    articles.forEach(article => {
+      article.tags.forEach(tag => {
+        allTags.add(tag.toLowerCase().replace(/\s+/g, '-'));
+      });
+    });
+
+    allTags.forEach(tagSlug => {
+      urls.push({
+        loc: `${BASE_URL}/tag/${tagSlug}`,
+        lastmod: now,
+        changefreq: 'weekly',
+        priority: '0.6'
       });
     });
   } catch (error) {
