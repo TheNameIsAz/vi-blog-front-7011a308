@@ -10,6 +10,7 @@ import About from "./pages/About";
 import ArticleDetail from "./pages/ArticleDetail";
 import Category from "./pages/Category";
 import Search from "./pages/Search";
+import Sitemap from "./pages/Sitemap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const AppContent = () => {
       <Route path="/article/:slug" element={<ArticleDetail />} />
       <Route path="/category/:categorySlug" element={<Category />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/sitemap.xml" element={<Sitemap />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
