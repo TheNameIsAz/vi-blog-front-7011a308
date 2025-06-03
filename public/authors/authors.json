@@ -1,59 +1,51 @@
 
 {
   "marie-dubois": {
+    "id": "marie-dubois",
     "firstName": "Marie",
     "lastName": "Dubois",
     "fullName": "Marie Dubois",
-    "bio": "Développeuse frontend passionnée avec plus de 8 ans d'expérience dans l'écosystème React et TypeScript. Marie contribue régulièrement à des projets open source et anime des workshops sur les bonnes pratiques du développement moderne. Elle est particulièrement intéressée par les performances web et l'accessibilité.",
+    "bio": "Développeuse full-stack passionnée avec plus de 8 ans d'expérience. Spécialisée en React, Node.js et architecture cloud. Contribue régulièrement à des projets open source et anime des workshops sur les technologies web modernes.",
     "avatar": "/placeholder.svg",
-    "role": "Senior Frontend Developer",
-    "company": "TechCorp",
-    "social": {
-      "twitter": "@marie_dev",
-      "linkedin": "marie-dubois-dev",
-      "github": "marie-dubois"
-    }
+    "email": "marie.dubois@example.com",
+    "twitter": "@marie_codes",
+    "linkedin": "marie-dubois-dev",
+    "website": "https://mariedubois.dev"
   },
-  "alexandre-petit": {
-    "firstName": "Alexandre",
-    "lastName": "Petit",
-    "fullName": "Alexandre Petit",
-    "bio": "Designer UX/UI avec une forte expertise en design systems et en recherche utilisateur. Alexandre travaille depuis 6 ans sur des produits digitaux innovants et accompagne les équipes dans la création d'expériences utilisateur exceptionnelles. Il est certifié en Design Thinking et adore partager ses connaissances.",
-    "avatar": "/placeholder.svg",
-    "role": "Lead UX/UI Designer",
-    "company": "DesignStudio",
-    "social": {
-      "twitter": "@alex_design",
-      "linkedin": "alexandre-petit-design",
-      "dribbble": "alexpetit"
-    }
-  },
-  "sarah-martin": {
-    "firstName": "Sarah",
+  "pierre-martin": {
+    "id": "pierre-martin",
+    "firstName": "Pierre",
     "lastName": "Martin",
-    "fullName": "Sarah Martin",
-    "bio": "Développeuse full-stack spécialisée dans les outils de productivité et l'optimisation de workflow. Avec 5 ans d'expérience, Sarah maîtrise parfaitement l'écosystème JavaScript/TypeScript et partage régulièrement ses découvertes d'outils et d'extensions qui révolutionnent le quotidien des développeurs.",
+    "fullName": "Pierre Martin",
+    "bio": "Designer UX/UI senior avec 10 ans d'expérience dans la création d'interfaces utilisateur. Expert en design systems et méthodologies centrées utilisateur. Ancien design lead chez plusieurs startups technologiques.",
     "avatar": "/placeholder.svg",
-    "role": "Full-Stack Developer",
-    "company": "DevTools Inc",
-    "social": {
-      "twitter": "@sarah_codes",
-      "linkedin": "sarah-martin-dev",
-      "github": "sarah-martin"
-    }
+    "email": "pierre.martin@example.com",
+    "twitter": "@pierre_designs",
+    "linkedin": "pierre-martin-ux",
+    "website": "https://pierremartin.design"
   },
-  "thomas-durand": {
-    "firstName": "Thomas",
-    "lastName": "Durand",
-    "fullName": "Thomas Durand",
-    "bio": "Expert en cybersécurité et développeur backend avec plus de 10 ans d'expérience dans la protection des systèmes d'information. Thomas est certifié CISSP et intervient régulièrement en tant que consultant sécurité auprès d'entreprises. Il est passionné par l'éducation en sécurité informatique et la sensibilisation aux bonnes pratiques.",
+  "laura-chen": {
+    "id": "laura-chen",
+    "firstName": "Laura",
+    "lastName": "Chen",
+    "fullName": "Laura Chen",
+    "bio": "Développeuse frontend spécialisée en React et TypeScript. Passionnée par l'optimisation de performance et l'accessibilité web. Organise des meetups tech locaux et mentor pour les développeurs junior.",
     "avatar": "/placeholder.svg",
-    "role": "Security Engineer",
-    "company": "SecureWeb Solutions",
-    "social": {
-      "twitter": "@thomas_sec",
-      "linkedin": "thomas-durand-security",
-      "github": "thomas-durand"
-    }
+    "email": "laura.chen@example.com",
+    "twitter": "@laura_codes",
+    "linkedin": "laura-chen-dev",
+    "website": "https://laurachen.dev"
+  },
+  "alex-bernard": {
+    "id": "alex-bernard",
+    "firstName": "Alex",
+    "lastName": "Bernard",
+    "fullName": "Alex Bernard",
+    "bio": "Expert en cybersécurité et développement sécurisé avec 12 ans d'expérience. Consultant en sécurité applicative, formateur et conférencier. Spécialisé dans l'audit de sécurité et la mise en place de pratiques DevSecOps.",
+    "avatar": "/placeholder.svg",
+    "email": "alex.bernard@example.com",
+    "twitter": "@alex_security",
+    "linkedin": "alex-bernard-security",
+    "website": "https://alexbernard.security"
   }
 }
