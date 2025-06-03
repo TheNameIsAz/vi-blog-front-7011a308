@@ -1,4 +1,3 @@
-
 import { Article, ArticleMeta, CategoryInfo } from '../types/article';
 import { getAuthorById } from './authorService';
 
@@ -60,32 +59,56 @@ let cacheInitialized = false;
 
 // Parse le front matter d'un fichier markdown
 function parseFrontMatter(content: string): { meta: ArticleMeta; content: string } {
-  console.log('Parsing content, first 200 chars:', content.substring(0, 200));
+  console.log('Raw content first 100 chars:', JSON.stringify(content.substring(0, 100)));
   
+  // Normalize line endings and trim whitespace
+  const normalizedContent = content.replace(/\r\n/g, '\n').trim();
+  
+  // Updated regex to be more flexible with whitespace
   const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-  const match = content.match(frontMatterRegex);
+  const match = normalizedContent.match(frontMatterRegex);
   
   if (!match) {
-    console.error('No front matter found. Content preview:', content.substring(0, 500));
+    console.error('Front matter regex failed. Testing alternative patterns...');
+    console.log('Content starts with:', normalizedContent.substring(0, 20));
+    console.log('Content includes ---?', normalizedContent.includes('---'));
+    
+    // Try alternative regex patterns
+    const altRegex1 = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+    const altMatch1 = normalizedContent.match(altRegex1);
+    
+    if (altMatch1) {
+      console.log('Alternative regex 1 worked!');
+      const frontMatter = altMatch1[1];
+      const markdownContent = altMatch1[2];
+      return parseMetaAndContent(frontMatter, markdownContent);
+    }
+    
     throw new Error('Invalid markdown format: missing front matter');
   }
 
   const frontMatter = match[1];
   const markdownContent = match[2];
   
-  console.log('Front matter found:', frontMatter);
+  return parseMetaAndContent(frontMatter, markdownContent);
+}
+
+function parseMetaAndContent(frontMatter: string, markdownContent: string): { meta: ArticleMeta; content: string } {
+  console.log('Parsing front matter:', frontMatter);
   
   // Parse YAML-like front matter
   const meta: Partial<ArticleMeta> = {};
   frontMatter.split('\n').forEach(line => {
-    const [key, ...valueParts] = line.split(':');
-    if (key && valueParts.length > 0) {
-      const value = valueParts.join(':').trim().replace(/^["']|["']$/g, '');
-      if (key.trim() === 'tags') {
-        meta[key.trim() as keyof ArticleMeta] = value.split(',').map(tag => tag.trim()) as any;
-      } else {
-        meta[key.trim() as keyof ArticleMeta] = value as any;
-      }
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) return;
+    
+    const key = line.substring(0, colonIndex).trim();
+    const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
+    
+    if (key === 'tags') {
+      meta[key as keyof ArticleMeta] = value.split(',').map(tag => tag.trim()) as any;
+    } else {
+      meta[key as keyof ArticleMeta] = value as any;
     }
   });
 
