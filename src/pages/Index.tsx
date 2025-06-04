@@ -55,10 +55,10 @@ const Index = () => {
   const filteredArticles = selectedCategory === 'all' 
     ? recentArticles 
     : recentArticles.filter(article => 
-        article.category.toLowerCase() === selectedCategory
+        article.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory
       );
 
-  console.log('Render state:', {
+  console.log('Index - Render state:', {
     totalArticles: articles.length,
     featuredArticle: featuredArticle?.title,
     recentArticles: recentArticles.length,
@@ -139,13 +139,18 @@ const Index = () => {
                   <span className="bg-blue-100 text-blue-600 text-xs font-medium px-2 py-1 rounded-full">
                     Article featured
                   </span>
-                  <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+                  <Link
+                    to={`/${featuredArticle.category.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full hover:bg-gray-200 transition-colors"
+                  >
                     {featuredArticle.category}
-                  </span>
+                  </Link>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                  {featuredArticle.title}
-                </h2>
+                <Link to={`/${featuredArticle.category.toLowerCase().replace(/\s+/g, '-')}/${featuredArticle.slug}`}>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 hover:text-blue-600 transition-colors">
+                    {featuredArticle.title}
+                  </h2>
+                </Link>
                 <p className="text-gray-600 mb-6">
                   {featuredArticle.excerpt}
                 </p>

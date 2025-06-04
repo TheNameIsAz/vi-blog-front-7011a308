@@ -146,9 +146,12 @@ const ArticleDetail = () => {
         {/* Article Meta */}
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
-            <span className="bg-blue-100 text-blue-600 text-sm font-medium px-3 py-1 rounded-full">
+            <Link
+              to={`/${article.category.toLowerCase().replace(/\s+/g, '-')}`}
+              className="bg-blue-100 text-blue-600 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors"
+            >
               {article.category}
-            </span>
+            </Link>
             {article.tags.map((tag) => (
               <Link
                 key={tag}

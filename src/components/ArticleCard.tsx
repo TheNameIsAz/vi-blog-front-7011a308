@@ -23,6 +23,12 @@ const ArticleCard = ({
   category,
   image 
 }: ArticleCardProps) => {
+  // Créer le slug de la catégorie et construire l'URL correcte
+  const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+  const articleUrl = `/${categorySlug}/${id}`;
+
+  console.log('ArticleCard - Creating URL:', { category, categorySlug, id, articleUrl });
+
   return (
     <article className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
       {/* Image */}
@@ -41,9 +47,12 @@ const ArticleCard = ({
           </div>
         )}
         <div className="absolute top-3 left-3">
-          <span className="bg-white/90 backdrop-blur-sm text-blue-600 text-xs font-medium px-2 py-1 rounded-full">
+          <Link
+            to={`/${categorySlug}`}
+            className="bg-white/90 backdrop-blur-sm text-blue-600 text-xs font-medium px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
+          >
             {category}
-          </span>
+          </Link>
         </div>
       </div>
       
@@ -74,7 +83,7 @@ const ArticleCard = ({
         
         {/* Read more link */}
         <Link 
-          to={`/${id}`}
+          to={articleUrl}
           className="inline-flex items-center space-x-2 text-blue-600 font-medium hover:text-blue-700 transition-colors group"
         >
           <span>Lire la suite</span>
