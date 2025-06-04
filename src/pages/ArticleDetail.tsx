@@ -8,6 +8,7 @@ import { Article } from '../types/article';
 import { Author } from '../types/author';
 import { getArticleBySlug, getCategoryBySlug } from '../services/articleService';
 import { getAuthorById } from '../services/authorService';
+import { normalizeSlug, getCategoryUrl, getTagUrl } from '../utils/slugUtils';
 
 const ArticleDetail = () => {
   const { categorySlug, articleSlug } = useParams<{ categorySlug: string; articleSlug: string }>();
@@ -46,8 +47,10 @@ const ArticleDetail = () => {
           return;
         }
 
-        // Vérifier que l'article appartient à la bonne catégorie
-        const articleCategorySlug = foundArticle.category.toLowerCase().replace(/\s+/g, '-');
+        // Vérifier que l'article appartient à la bonne catégorie en utilisant normalizeSlug
+        const articleCategorySlug = normalizeSlug(foundArticle.category);
+        console.log('Category comparison:', { articleCategory: articleCategorySlug, urlCategory: categorySlug });
+        
         if (articleCategorySlug !== categorySlug) {
           console.log('Article category mismatch:', { articleCategory: articleCategorySlug, urlCategory: categorySlug });
           setArticle(null);
@@ -147,7 +150,7 @@ const ArticleDetail = () => {
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
             <Link
-              to={`/${article.category.toLowerCase().replace(/\s+/g, '-')}`}
+              to={getCategoryUrl(article.category)}
               className="bg-blue-100 text-blue-600 text-sm font-medium px-3 py-1 rounded-full hover:bg-blue-200 transition-colors"
             >
               {article.category}
@@ -155,7 +158,7 @@ const ArticleDetail = () => {
             {article.tags.map((tag) => (
               <Link
                 key={tag}
-                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                to={getTagUrl(tag)}
                 className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
               >
                 {tag}
@@ -247,7 +250,7 @@ const ArticleDetail = () => {
             {article.tags.map((tag) => (
               <Link
                 key={tag}
-                to={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                to={getTagUrl(tag)}
                 className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
               >
                 {tag}
