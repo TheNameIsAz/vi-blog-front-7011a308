@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
@@ -8,6 +7,7 @@ import SearchBar from '../components/SearchBar';
 import { TrendingUp, Clock, Star, Grid3x3, Tag } from 'lucide-react';
 import { Article } from '../types/article';
 import { getAllArticles, searchArticles, getCategories } from '../services/articleService';
+import { getArticleUrl, getCategoryUrl } from '../utils/slugUtils';
 
 const Index = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -141,13 +141,13 @@ const Index = () => {
                     Article featured
                   </span>
                   <Link
-                    to={`/${featuredArticle.category.toLowerCase().replace(/\s+/g, '-')}`}
+                    to={getCategoryUrl(featuredArticle.category)}
                     className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full hover:bg-gray-200 transition-colors"
                   >
                     {featuredArticle.category}
                   </Link>
                 </div>
-                <Link to={`/${featuredArticle.category.toLowerCase().replace(/\s+/g, '-')}/${featuredArticle.slug}`}>
+                <Link to={getArticleUrl(featuredArticle.category, featuredArticle.slug)}>
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 hover:text-blue-600 transition-colors">
                     {featuredArticle.title}
                   </h2>

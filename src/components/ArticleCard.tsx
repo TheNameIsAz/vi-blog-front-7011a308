@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { getArticleUrl, getCategoryUrl } from '../utils/slugUtils';
 
 interface ArticleCardProps {
   id: string;
@@ -23,11 +24,11 @@ const ArticleCard = ({
   category,
   image 
 }: ArticleCardProps) => {
-  // Créer le slug de la catégorie et construire l'URL correcte
-  const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
-  const articleUrl = `/${categorySlug}/${id}`;
+  // Utiliser les fonctions utilitaires pour générer les URLs
+  const articleUrl = getArticleUrl(category, id);
+  const categoryUrl = getCategoryUrl(category);
 
-  console.log('ArticleCard - Creating URL:', { category, categorySlug, id, articleUrl });
+  console.log('ArticleCard - Creating URL:', { category, id, articleUrl, categoryUrl });
 
   return (
     <article className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -48,7 +49,7 @@ const ArticleCard = ({
         )}
         <div className="absolute top-3 left-3">
           <Link
-            to={`/${categorySlug}`}
+            to={categoryUrl}
             className="bg-white/90 backdrop-blur-sm text-blue-600 text-xs font-medium px-2 py-1 rounded-full hover:bg-blue-100 transition-colors"
           >
             {category}

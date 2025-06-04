@@ -1,5 +1,6 @@
 import { Article, ArticleMeta, CategoryInfo } from '../types/article';
 import { getAuthorById } from './authorService';
+import { normalizeSlug } from '../utils/slugUtils';
 
 // Configuration des catégories
 const CATEGORIES: Record<string, CategoryInfo> = {
@@ -209,10 +210,10 @@ async function initializeCache(): Promise<void> {
   
   console.log(`Cache initialized with ${articles.length} articles:`, articles.map(a => a.title));
   
-  // Met à jour le compteur de catégories
+  // Met à jour le compteur de catégories en utilisant la normalisation
   Object.keys(CATEGORIES).forEach(categorySlug => {
     CATEGORIES[categorySlug].count = articlesCache.filter(
-      article => article.category.toLowerCase() === categorySlug
+      article => normalizeSlug(article.category) === categorySlug
     ).length;
   });
 }
@@ -231,7 +232,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | undefine
 export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
   await initializeCache();
   return articlesCache.filter(
-    article => article.category.toLowerCase() === categorySlug
+    article => normalizeSlug(article.category) === categorySlug
   );
 }
 
