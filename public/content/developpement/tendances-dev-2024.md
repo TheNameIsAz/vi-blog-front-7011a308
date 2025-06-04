@@ -5,7 +5,7 @@ excerpt: Découvrez les technologies et frameworks qui façonnent l'avenir du d�
 author: marie-dubois
 publishDate: 15 Mai 2024
 readTime: 5 min
-category: Développement
+category: Developpement
 tags: React, TypeScript, Performance, Tendances
 image: /placeholder.svg
 ---

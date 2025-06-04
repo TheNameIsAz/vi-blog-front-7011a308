@@ -5,7 +5,7 @@ excerpt: Protégez vos applications web contre les menaces actuelles avec ces bo
 author: alex-bernard
 publishDate: 3 Mai 2024
 readTime: 10 min
-category: Sécurité
+category: Securite
 tags: Sécurité, HTTPS, Authentification, Vulnérabilités
 image: /placeholder.svg
 ---
