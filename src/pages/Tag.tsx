@@ -110,7 +110,7 @@ const Tag = () => {
               {paginatedArticles.map((article) => (
                 <ArticleCard
                   key={article.id}
-                  id={`${article.category.toLowerCase()}/${article.slug}`}
+                  id={article.slug}
                   title={article.title}
                   excerpt={article.excerpt}
                   author={article.author}
