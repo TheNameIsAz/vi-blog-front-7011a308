@@ -35,22 +35,22 @@ const STATIC_ARTICLES = [
   {
     category: 'developpement',
     slug: 'tendances-dev-2024',
-    filePath: '/content/developpement/tendances-dev-2024.md'
+    filePath: './content/developpement/tendances-dev-2024.md'
   },
   {
     category: 'design',
     slug: 'design-system-guide',
-    filePath: '/content/design/design-system-guide.md'
+    filePath: './content/design/design-system-guide.md'
   },
   {
     category: 'outils',
     slug: 'vscode-extensions-2024',
-    filePath: '/content/outils/vscode-extensions-2024.md'
+    filePath: './content/outils/vscode-extensions-2024.md'
   },
   {
     category: 'securite',
     slug: 'securite-web-2024',
-    filePath: '/content/securite/securite-web-2024.md'
+    filePath: './content/securite/securite-web-2024.md'
   }
 ];
 
@@ -150,11 +150,36 @@ function markdownToHtml(markdown: string): string {
 async function loadArticleFromFile(filePath: string, slug: string, category: string): Promise<Article> {
   try {
     console.log(`Loading article from: ${filePath}`);
-    const response = await fetch(filePath);
-    console.log(`Response status: ${response.status}`);
     
-    if (!response.ok) {
-      throw new Error(`Failed to load article: ${filePath} (${response.status})`);
+    // Try different path variations for production/development compatibility
+    const pathsToTry = [
+      filePath,
+      filePath.replace('./', '/'),
+      filePath.replace('./content/', '/content/'),
+      `${import.meta.env.BASE_URL}${filePath.replace('./', '')}`
+    ];
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    for (const path of pathsToTry) {
+      try {
+        console.log(`Trying path: ${path}`);
+        response = await fetch(path);
+        if (response.ok) {
+          console.log(`Success with path: ${path}`);
+          break;
+        } else {
+          console.log(`Failed with path: ${path} (${response.status})`);
+        }
+      } catch (error) {
+        console.log(`Error with path: ${path}`, error);
+        lastError = error as Error;
+      }
+    }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to load article: ${filePath} (${response?.status || 'network error'}). Last error: ${lastError?.message}`);
     }
     
     const content = await response.text();
