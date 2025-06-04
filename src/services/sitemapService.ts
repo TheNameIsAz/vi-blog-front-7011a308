@@ -42,18 +42,18 @@ export async function generateSitemap(): Promise<string> {
   });
 
   try {
-    // Catégories
+    // Catégories - URLs directes sans /category/
     const categories = getCategories();
     categories.forEach(category => {
       urls.push({
-        loc: `${BASE_URL}/category/${category.slug}`,
+        loc: `${BASE_URL}/${category.slug}`,
         lastmod: now,
         changefreq: 'weekly',
         priority: '0.8'
       });
     });
 
-    // Articles avec nouvelle structure d'URL
+    // Articles avec la structure /{categorySlug}/{articleSlug}
     const articles = await getAllArticles();
     articles.forEach(article => {
       const categorySlug = article.category.toLowerCase().replace(/\s+/g, '-');
