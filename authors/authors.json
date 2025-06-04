@@ -1,0 +1,51 @@
+
+{
+  "marie-dubois": {
+    "id": "marie-dubois",
+    "firstName": "Marie",
+    "lastName": "Dubois",
+    "fullName": "Marie Dubois",
+    "bio": "Développeuse full-stack passionnée avec plus de 8 ans d'expérience. Spécialisée en React, Node.js et architecture cloud. Contribue régulièrement à des projets open source et anime des workshops sur les technologies web modernes.",
+    "avatar": "/placeholder.svg",
+    "email": "marie.dubois@example.com",
+    "twitter": "@marie_codes",
+    "linkedin": "marie-dubois-dev",
+    "website": "https://mariedubois.dev"
+  },
+  "pierre-martin": {
+    "id": "pierre-martin",
+    "firstName": "Pierre",
+    "lastName": "Martin",
+    "fullName": "Pierre Martin",
+    "bio": "Designer UX/UI senior avec 10 ans d'expérience dans la création d'interfaces utilisateur. Expert en design systems et méthodologies centrées utilisateur. Ancien design lead chez plusieurs startups technologiques.",
+    "avatar": "/placeholder.svg",
+    "email": "pierre.martin@example.com",
+    "twitter": "@pierre_designs",
+    "linkedin": "pierre-martin-ux",
+    "website": "https://pierremartin.design"
+  },
+  "laura-chen": {
+    "id": "laura-chen",
+    "firstName": "Laura",
+    "lastName": "Chen",
+    "fullName": "Laura Chen",
+    "bio": "Développeuse frontend spécialisée en React et TypeScript. Passionnée par l'optimisation de performance et l'accessibilité web. Organise des meetups tech locaux et mentor pour les développeurs junior.",
+    "avatar": "/placeholder.svg",
+    "email": "laura.chen@example.com",
+    "twitter": "@laura_codes",
+    "linkedin": "laura-chen-dev",
+    "website": "https://laurachen.dev"
+  },
+  "alex-bernard": {
+    "id": "alex-bernard",
+    "firstName": "Alex",
+    "lastName": "Bernard",
+    "fullName": "Alex Bernard",
+    "bio": "Expert en cybersécurité et développement sécurisé avec 12 ans d'expérience. Consultant en sécurité applicative, formateur et conférencier. Spécialisé dans l'audit de sécurité et la mise en place de pratiques DevSecOps.",
+    "avatar": "/placeholder.svg",
+    "email": "alex.bernard@example.com",
+    "twitter": "@alex_security",
+    "linkedin": "alex-bernard-security",
+    "website": "https://alexbernard.security"
+  }
+}
