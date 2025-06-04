@@ -25,16 +25,30 @@ const Category = () => {
       if (!categorySlug) return;
       
       setIsLoading(true);
+      console.log('Loading category:', categorySlug);
+      
       try {
-        const [categoryArticles, categoryInfo] = await Promise.all([
-          getArticlesByCategory(categorySlug),
-          Promise.resolve(getCategoryBySlug(categorySlug))
-        ]);
+        // Essayer de charger la catégorie et ses articles
+        const categoryInfo = getCategoryBySlug(categorySlug);
+        console.log('Category info found:', categoryInfo);
         
+        if (!categoryInfo) {
+          console.log('No category found for slug:', categorySlug);
+          setCategory(null);
+          setArticles([]);
+          setIsLoading(false);
+          return;
+        }
+        
+        const categoryArticles = await getArticlesByCategory(categorySlug);
+        console.log('Articles found:', categoryArticles.length);
+        
+        setCategory(categoryInfo);
         setArticles(categoryArticles);
-        setCategory(categoryInfo || null);
       } catch (error) {
         console.error('Erreur lors du chargement de la catégorie:', error);
+        setCategory(null);
+        setArticles([]);
       } finally {
         setIsLoading(false);
       }
@@ -96,12 +110,13 @@ const Category = () => {
   }
 
   if (!category) {
+    console.log('Rendering 404 - no category found');
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Catégorie non trouvée</h1>
-          <p className="text-gray-600 mb-8">La catégorie que vous cherchez n'existe pas.</p>
+          <p className="text-gray-600 mb-8">La catégorie "{categorySlug}" n'existe pas.</p>
           <Link 
             to="/" 
             className="inline-flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"

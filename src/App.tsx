@@ -26,7 +26,8 @@ const AppContent = () => {
       <Route path="/search" element={<Search />} />
       <Route path="/sitemap.xml" element={<Sitemap />} />
       <Route path="/tag/:tagSlug" element={<Tag />} />
-      {/* Route pour les catégories sans /category/ */}
+      {/* Routes pour catégories - supporter les deux formats pour compatibilité */}
+      <Route path="/category/:categorySlug" element={<Category />} />
       <Route path="/:categorySlug" element={<Category />} />
       {/* Route pour les articles avec /{categorySlug}/{articleSlug} */}
       <Route path="/:categorySlug/:articleSlug" element={<ArticleDetail />} />

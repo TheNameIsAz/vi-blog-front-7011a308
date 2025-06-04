@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import AuthorCard from '../components/AuthorCard';
 import { Article } from '../types/article';
 import { Author } from '../types/author';
-import { getArticleBySlug } from '../services/articleService';
+import { getArticleBySlug, getCategoryBySlug } from '../services/articleService';
 import { getAuthorById } from '../services/authorService';
 
 const ArticleDetail = () => {
@@ -17,16 +17,48 @@ const ArticleDetail = () => {
 
   useEffect(() => {
     const loadArticle = async () => {
-      if (!articleSlug) return;
+      if (!articleSlug || !categorySlug) {
+        console.log('Missing parameters:', { categorySlug, articleSlug });
+        setIsLoading(false);
+        return;
+      }
       
       setIsLoading(true);
+      console.log('Loading article:', { categorySlug, articleSlug });
+      
       try {
+        // Vérifier que la catégorie existe
+        const categoryInfo = getCategoryBySlug(categorySlug);
+        if (!categoryInfo) {
+          console.log('Category not found:', categorySlug);
+          setArticle(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Charger l'article
         const foundArticle = await getArticleBySlug(articleSlug);
-        setArticle(foundArticle || null);
+        console.log('Article found:', foundArticle ? foundArticle.title : 'not found');
         
-        // Charger les informations de l'auteur si l'article existe
-        if (foundArticle) {
-          // Extraire l'ID de l'auteur depuis le front matter de l'article
+        if (!foundArticle) {
+          setArticle(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Vérifier que l'article appartient à la bonne catégorie
+        const articleCategorySlug = foundArticle.category.toLowerCase().replace(/\s+/g, '-');
+        if (articleCategorySlug !== categorySlug) {
+          console.log('Article category mismatch:', { articleCategory: articleCategorySlug, urlCategory: categorySlug });
+          setArticle(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setArticle(foundArticle);
+        
+        // Charger les informations de l'auteur
+        try {
           const response = await fetch(foundArticle.filePath);
           const content = await response.text();
           const frontMatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
@@ -40,18 +72,19 @@ const ArticleDetail = () => {
               setAuthor(authorData || null);
             }
           }
+        } catch (authorError) {
+          console.log('Could not load author data:', authorError);
         }
       } catch (error) {
         console.error('Erreur lors du chargement de l\'article:', error);
         setArticle(null);
-        setAuthor(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     loadArticle();
-  }, [articleSlug]);
+  }, [articleSlug, categorySlug]);
 
   if (isLoading) {
     return (
@@ -79,7 +112,7 @@ const ArticleDetail = () => {
         <Header />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Article non trouvé</h1>
-          <p className="text-gray-600 mb-8">L'article que vous cherchez n'existe pas ou a été supprimé.</p>
+          <p className="text-gray-600 mb-8">L'article "{articleSlug}" n'existe pas dans la catégorie "{categorySlug}".</p>
           <Link 
             to="/" 
             className="inline-flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
