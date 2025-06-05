@@ -1,4 +1,3 @@
-
 ---
 title: Guide complet des Design Systems Français !
 excerpt: Apprenez à créer et maintenir un design system efficace pour vos projets web et mobile.
@@ -6,8 +5,8 @@ author: pierre-martin
 publishDate: 12 Mai 2024
 readTime: 8 min
 category: Design
-tags: Design System, UI/UX, Composants, Figma
-image: /placeholder.svg
+tags: Design-System, UI, Composants, Figma
+image: placeholder.svg
 ---
 
 # Introduction aux Design Systems

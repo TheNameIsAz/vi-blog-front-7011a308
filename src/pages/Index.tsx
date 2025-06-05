@@ -71,7 +71,7 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      {/* Hero Section */}
+      {/* Hero Section *
       <section className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
@@ -83,7 +83,7 @@ const Index = () => {
               Découvrez les dernières tendances, tutoriels et conseils pour devenir un développeur d'exception
             </p>
             
-            {/* Search Bar */}
+            {/* Search Bar * /}
             <div className="max-w-md mx-auto mb-8">
               <SearchBar 
                 onSearch={handleSearch}
@@ -92,7 +92,7 @@ const Index = () => {
               />
             </div>
             
-            {/* Stats */}
+            {/* Stats * /}
             <div className="flex justify-center items-center space-x-8 text-sm">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4" />
@@ -113,7 +113,81 @@ const Index = () => {
             </div>
           </div>
         </div>
+      </section>*/}
+      <section className="bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <img src="/assets/img/logo-notxt.png" alt="Logo La Commu'" className="h-16 w-auto mx-auto mb-4" />
+            {/* Nom & Branding */}
+            <div className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight">
+              <p className="mb-2">Bienvenue sur</p>
+              <h1>
+                <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                  La Commu'
+                </span>
+                
+              </h1>
+              </div>
+            {/* <p className="text-base md:text-lg text-blue-100 mb-6">
+              Un regard à la croisée des usages numériques, des tendances et de la technologie
+            </p> */}
+            <p className="text-base md:text-lg text-blue-300 mb-6">
+            ~
+            </p>
+
+            {/* Accroche éditorialisée */}
+            <h2 className="text-2xl md:text-4xl font-bold mb-6 leading-tight">
+              <span>
+                Comparatifs, conseils et sélections pour mieux s’équiper
+              </span>
+              <span className="block bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+                tech, apps, outils numériques, services en ligne
+              </span>
+            </h2>
+
+            {/* Barre de recherche */}
+            <div className="max-w-md mx-auto mb-8">
+              <SearchBar 
+                onSearch={handleSearch}
+                results={searchResults}
+                isLoading={isSearching}
+              />
+            </div>
+
+            {/* Call to action */}
+            <div className="flex justify-center gap-4 mt-2 mb-10">
+              <Link to="/articles" className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+                Découvrir les articles
+              </Link>
+              <Link to="/categories" className="px-6 py-3 border border-white/30 hover:border-white text-white font-semibold rounded-lg transition">
+                Explorer les sujets
+              </Link>
+            </div>
+
+            {/* Statistiques */}
+            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-white/80 bg-white/10 backdrop-blur-sm px-6 py-4 rounded-xl max-w-3xl mx-auto">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="h-4 w-4" />
+                <span>{articles.length} articles</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Grid3x3 className="h-4 w-4" />
+                <span>{categories.length} catégories</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4" />
+                <span>Actualisé régulièrement</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Star className="h-4 w-4" />
+                <span>Sélection du moment</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+
 
       {/* Featured Article */}
       {featuredArticle && (
@@ -124,7 +198,7 @@ const Index = () => {
                 <div className="h-64 md:h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
                   {featuredArticle.image ? (
                     <img 
-                      src={featuredArticle.image} 
+                      src={`/assets/img/${featuredArticle.image}`}
                       alt={featuredArticle.title}
                       className="w-full h-full object-cover"
                     />

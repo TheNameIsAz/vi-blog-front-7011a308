@@ -1,97 +1,44 @@
-
-import { Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Description */}
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold mb-4">ViBlog</h3>
-            <p className="text-gray-300 mb-6 max-w-md">
-              Votre source d'inspiration pour le développement web moderne. 
-              Découvrez les dernières tendances, tutoriels et conseils d'experts.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Mail className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-          
-          {/* Navigation */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Navigation</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/" className="text-gray-300 hover:text-white transition-colors">
-                  Accueil
-                </a>
-              </li>
-              <li>
-                <a href="/about" className="text-gray-300 hover:text-white transition-colors">
-                  À propos
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Newsletter
-                </a>
-              </li>
-            </ul>
-          </div>
-          
-          {/* Categories */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Catégories</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Développement
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  UX/UI
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Outils
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Design
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+    <footer className="relative bg-gray-950 border-t-[10px] border-t-blue-950 text-white overflow-hidden">
+      {/* Accent visuel en fond */}
+      <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('/assets/img/pattern.svg')] bg-cover bg-center" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
         
-        {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © 2024 ViBlog. Tous droits réservés.
+        {/* Bloc branding + description */}
+        <div className="text-center mb-10">
+          <div className="flex justify-center items-center mb-6">
+            <img src="/assets/img/logo-white.png" alt="Logo La Commu'" className="h-8 w-auto mr-3" />
+          </div>
+          <p className="text-sm text-gray-400 max-w-xl mx-auto">
+            Un média indépendant dédié à la tech, aux outils numériques et aux usages modernes. 
+            Articles sélectionnés, regard transversal, contenus utiles.
           </p>
-          <p className="text-gray-400 text-sm flex items-center">
-            Créé avec <Heart className="h-4 w-4 text-red-500 mx-1" /> et Vite
-          </p>
+        </div>
+
+        {/* Tags / Catégories actives */}
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 uppercase tracking-wide mb-8">
+          <Link to="/category/tech" className="hover:text-white transition">Technologie</Link>
+          <Link to="/category/apps" className="hover:text-white transition">Applications</Link>
+          <Link to="/category/outils" className="hover:text-white transition">Outils</Link>
+          <Link to="/category/services" className="hover:text-white transition">Services</Link>
+          <Link to="/category/internet" className="hover:text-white transition">Culture web</Link>
+        </div>
+
+        {/* Mini description SEO-friendly */}
+        <p className="text-xs text-gray-600 text-center max-w-2xl mx-auto mb-12">
+          Comparatifs, sélections et recommandations sur les outils numériques, logiciels, applications, services en ligne et tendances digitales.
+        </p>
+
+        {/* Ligne graphique */}
+        <div className="h-px bg-gradient-to-r from-blue-600 via-blue-400 to-transparent mb-6" />
+
+        {/* Bas du footer */}
+        <div className="text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} La Commu’. Tous droits réservés.
         </div>
       </div>
     </footer>

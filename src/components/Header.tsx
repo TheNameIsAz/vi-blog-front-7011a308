@@ -30,10 +30,10 @@ const Header = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
-            <PenTool className="h-6 w-6" />
-            <span>ViBlog</span>
-          </Link>
+          <Link to="/" className="flex items-center space-x-3">
+  <img src="/assets/img/logo.png" alt="Logo La Commu'" className="h-8 w-auto" />
+</Link>
+
           
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

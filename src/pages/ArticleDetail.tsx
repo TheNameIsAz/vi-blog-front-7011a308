@@ -16,6 +16,8 @@ const ArticleDetail = () => {
   const [author, setAuthor] = useState<Author | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [toc, setToc] = useState<{ id: string, text: string, level: number }[]>([]);
+
   useEffect(() => {
     const loadArticle = async () => {
       if (!articleSlug || !categorySlug) {
@@ -29,7 +31,7 @@ const ArticleDetail = () => {
       
       try {
         // Vérifier que la catégorie existe
-        const categoryInfo = getCategoryBySlug(categorySlug);
+        const categoryInfo = await getCategoryBySlug(categorySlug);
         if (!categoryInfo) {
           console.log('Category not found:', categorySlug);
           setArticle(null);
@@ -222,7 +224,7 @@ const ArticleDetail = () => {
           <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center">
             {article.image ? (
               <img 
-                src={article.image} 
+                src={`/assets/img/${article.image}`} 
                 alt={article.title}
                 className="w-full h-full object-cover rounded-lg"
               />
@@ -234,8 +236,24 @@ const ArticleDetail = () => {
           </div>
         </div>
 
+        {/* Article Title Table */}
+        {toc.length > 0 && (
+          <div className="mb-12 border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-md">
+            <h2 className="text-lg font-semibold mb-3 text-blue-800">Sommaire</h2>
+            <ul className="space-y-2 text-sm text-blue-700">
+              {toc.map(({ id, text, level }) => (
+                <li key={id} className={`ml-${level === 3 ? '4' : '0'}`}>
+                  <a href={`#${id}`} className="hover:underline">
+                    {text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none">
+        <div id="article-content" className="prose prose-lg max-w-none">
           <div 
             className="text-gray-700 leading-relaxed [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:text-gray-900 [&>h1]:mt-8 [&>h1]:mb-6 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:text-gray-700 [&>p]:leading-relaxed [&>ul]:mb-4 [&>li]:mb-2 [&>ol]:mb-4 [&>code]:bg-gray-100 [&>code]:px-1 [&>code]:py-0.5 [&>code]:rounded [&>code]:text-sm [&>pre]:bg-gray-900 [&>pre]:text-white [&>pre]:p-4 [&>pre]:rounded-lg [&>pre]:overflow-x-auto [&>pre]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-blue-500 [&>blockquote]:pl-4 [&>blockquote]:italic [&>a]:text-blue-600 [&>a]:underline [&>a]:hover:text-blue-800"
             dangerouslySetInnerHTML={{ __html: article.content }}

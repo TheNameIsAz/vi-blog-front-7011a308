@@ -1,4 +1,3 @@
-
 ---
 title: Les tendances du développement web en 2024
 excerpt: Découvrez les technologies et frameworks qui façonnent l'avenir du développement web cette année.
@@ -7,7 +6,7 @@ publishDate: 15 Mai 2024
 readTime: 5 min
 category: Developpement
 tags: React, TypeScript, Performance, Tendances
-image: /placeholder.svg
+image: placeholder.svg
 ---
 
 # L'évolution constante du développement web

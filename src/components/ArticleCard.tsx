@@ -36,7 +36,7 @@ const ArticleCard = ({
       <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
         {image ? (
           <img 
-            src={image} 
+            src={`/assets/img/${image}`} 
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />

@@ -1,7 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { Article } from '../types/article';
+import { normalizeSlug } from '../utils/slugUtils';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -52,7 +54,7 @@ const SearchBar = ({ onSearch, results, isLoading, className = '' }: SearchBarPr
           value={query}
           onChange={handleInputChange}
           placeholder="Rechercher un article..."
-          className="w-full pl-10 pr-10 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="w-full pl-10 pr-10 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30"
         />
         {query && (
           <button
@@ -74,21 +76,20 @@ const SearchBar = ({ onSearch, results, isLoading, className = '' }: SearchBarPr
           ) : results.length > 0 ? (
             <div className="py-2">
               {results.map((article) => (
-                <a
-                  key={article.id}
-                  href={`/article/${article.slug}`}
-                  onClick={handleResultClick}
-                  className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-                >
-                  <h4 className="font-medium text-gray-900 mb-1">{article.title}</h4>
-                  <p className="text-sm text-gray-600 line-clamp-2">{article.excerpt}</p>
-                  <div className="flex items-center mt-2 text-xs text-gray-500">
-                    <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full mr-2">
-                      {article.category}
-                    </span>
-                    <span>{article.author} • {article.publishDate}</span>
-                  </div>
-                </a>
+                <Link
+                to={`/${normalizeSlug(article.category)}/${article.slug}`}
+                onClick={handleResultClick}
+                className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+              >
+                <h4 className="font-medium text-gray-900 mb-1">{article.title}</h4>
+                <p className="text-sm text-gray-600 line-clamp-2">{article.excerpt}</p>
+                <div className="flex items-center mt-2 text-xs text-gray-500">
+                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full mr-2">
+                    {article.category}
+                  </span>
+                  <span>{article.author} • {article.publishDate}</span>
+                </div>
+              </Link>
               ))}
             </div>
           ) : query.length > 0 ? (

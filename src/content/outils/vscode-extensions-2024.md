@@ -1,4 +1,3 @@
-
 ---
 title: Les meilleures extensions VS Code en 2024
 excerpt: Découvrez les extensions incontournables pour optimiser votre productivité avec Visual Studio Code.
@@ -7,7 +6,7 @@ publishDate: 8 Mai 2024
 readTime: 6 min
 category: Outils
 tags: VS Code, Extensions, Productivité, Développement
-image: /placeholder.svg
+image: placeholder.svg
 ---
 
 # Boostez votre productivité avec VS Code

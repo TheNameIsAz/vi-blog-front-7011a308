@@ -3,7 +3,56 @@ import { getAuthorById } from './authorService';
 import { normalizeSlug } from '../utils/slugUtils';
 
 // Configuration des catégories
-const CATEGORIES: Record<string, CategoryInfo> = {};
+const CATEGORIES: Record<string, CategoryInfo> = {
+  'developpement': {
+    name: 'Développement',
+    slug: 'developpement',
+    description: 'Tutoriels et conseils sur le développement web',
+    count: 0
+  },
+  'design': {
+    name: 'Design',
+    slug: 'design',
+    description: 'UX/UI, tendances design et outils créatifs',
+    count: 0
+  },
+  'outils': {
+    name: 'Outils',
+    slug: 'outils',
+    description: 'Découverte d\'outils et technologies',
+    count: 0
+  },
+  'securite': {
+    name: 'Sécurité',
+    slug: 'securite',
+    description: 'Bonnes pratiques et conseils sécurité',
+    count: 0
+  }
+};
+
+// Articles statiques pour la démo
+const STATIC_ARTICLES = [
+  {
+    category: 'developpement',
+    slug: 'tendances-dev-2024',
+    filePath: './content/developpement/tendances-dev-2024.md'
+  },
+  {
+    category: 'design',
+    slug: 'design-system-guide',
+    filePath: './content/design/design-system-guide.md'
+  },
+  {
+    category: 'outils',
+    slug: 'vscode-extensions-2024',
+    filePath: './content/outils/vscode-extensions-2024.md'
+  },
+  {
+    category: 'securite',
+    slug: 'securite-web-2024',
+    filePath: './content/securite/securite-web-2024.md'
+  }
+];
 
 // Cache pour les articles
 let articlesCache: Article[] = [];
@@ -71,77 +120,31 @@ function parseMetaAndContent(frontMatter: string, markdownContent: string): { me
     content: markdownContent
   };
 }
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-');
-}
+
 // Convertit le markdown en HTML (version simplifiée)
 function markdownToHtml(markdown: string): string {
-  // Basic markdown to HTML
-  let html = markdown
+  return markdown
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-    .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
-    .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
-    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*)\*/gim, '<em>$1</em>')
     .replace(/```(\w+)?\n([\s\S]*?)\n```/gim, '<pre><code class="language-$1">$2</code></pre>')
     .replace(/`([^`]+)`/gim, '<code>$1</code>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-    .replace(/\n\n/gim, '</p><p>')
     .replace(/^\* (.*$)/gim, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>')
     .replace(/<\/ul>\s*<ul>/gim, '')
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/gims, '<ol>$1</ol>')
     .replace(/<\/ol>\s*<ol>/gim, '')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\n\n/gim, '</p><p>')
     .replace(/^(?!<[h|u|o|l|p|c])/gim, '<p>')
     .replace(/$/gim, '</p>')
     .replace(/<p><\/p>/gim, '')
     .replace(/<p>(<[h|u|o|l])/gim, '$1')
     .replace(/(<\/[h|u|o|l].*>)<\/p>/gim, '$1');
-
-  // Inject anchor links into headings
-  html = html.replace(/<h([2-6])>(.*?)<\/h\1>/g, (match, level, content) => {
-    const plainText = content.replace(/<[^>]*>/g, '');
-    const slug = plainText.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '');
-
-    return `
-      <h${level} id="${slug}" class="group relative transition-colors duration-200">
-        <span>${plainText}</span>
-        <button 
-          onclick="
-            navigator.clipboard.writeText(window.location.origin + window.location.pathname + '#${slug}');
-            const tooltip = document.createElement('div');
-            tooltip.textContent = 'Copié !';
-            tooltip.className = 'ml-2 text-xs bg-blue-600 text-white px-2 py-1 w-16 rounded absolute';
-            tooltip.style.top = '-1.5rem';
-            tooltip.style.right = '-1.5rem';
-            this.appendChild(tooltip);
-            setTimeout(() => tooltip.remove(), 1500);
-          "
-          class="ml-2 inline-block opacity-0 group-hover:opacity-100  hover:text-blue-600 transition-opacity text-inherit relative"
-          aria-label="Copier le lien"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="inline-block w-4 h-4 text-inherit align-text-bottom" fill="currentColor">
-    <g>
-      <path d="M20.437 2.69c-3.37 0-5.778 3.05-8.186 5.297.322 0 .804-.16 1.285-.16.803 0 1.605.16 2.408.48 1.284-1.283 2.568-2.727 4.494-2.727.963 0 2.087.48 2.89 1.123 1.605 1.605 1.605 4.174 0 5.78l-4.174 4.172c-.642.642-1.926 1.124-2.89 1.124-2.246 0-3.37-1.446-4.172-3.212l-2.086 2.087c1.284 2.408 3.21 4.173 6.1 4.173 1.926 0 3.69-.802 4.815-2.086l4.172-4.174c1.445-1.444 2.408-3.21 2.408-5.297-.32-3.53-3.53-6.58-7.063-6.58z"/>
-      <path d="M13.535 22.113l-1.444 1.444c-.64.642-1.925 1.124-2.89 1.124-.962 0-2.085-.48-2.888-1.123-1.605-1.605-1.605-4.334 0-5.778l4.174-4.175c.642-.642 1.926-1.123 2.89-1.123 2.246 0 3.37 1.605 4.172 3.21l2.087-2.087c-1.284-2.407-3.21-4.173-6.1-4.173-1.926 0-3.692.803-4.815 2.087L4.547 15.69c-2.73 2.73-2.73 7.063 0 9.63 2.568 2.57 7.062 2.73 9.47 0l3.05-3.05c-.482.162-.963.162-1.445.162-.803 0-1.445 0-2.087-.32z"/>
-    </g>
-  </svg>
-        </button>
-      </h${level}>
-    `;
-  });
-
-  return html;
 }
-
 
 // Charge un article depuis le filesystem
 async function loadArticleFromFile(filePath: string, slug: string, category: string): Promise<Article> {
@@ -209,55 +212,23 @@ async function loadArticleFromFile(filePath: string, slug: string, category: str
 
 // Initialise le cache des articles
 async function initializeCache(): Promise<void> {
-  const files = import.meta.glob('../content/**/*.md', { query: '?raw', import: 'default', eager: true });
-
   if (cacheInitialized) return;
   
   console.log('Initializing articles cache...');
   const articles: Article[] = [];
   
-  for (const fullPath in files) {
+  for (const articleInfo of STATIC_ARTICLES) {
     try {
-      const content = files[fullPath];
-      const parts = fullPath.split('/');
-      const categorySlug = parts[2];
-      const filename = parts[3].replace('.md', '');
-  
-      const { meta, content: mdContent } = parseFrontMatter(content);
-      const htmlContent = markdownToHtml(mdContent);
-      const author = await getAuthorById(meta.author);
-      const authorName = author ? author.fullName : meta.author;
-  
-      const article: Article = {
-        ...meta,
-        author: authorName,
-        id: filename,
-        slug: filename,
-        content: htmlContent,
-        filePath: fullPath,
-        category: meta.category || categorySlug
-      };
-  
+      const article = await loadArticleFromFile(
+        articleInfo.filePath, 
+        articleInfo.slug, 
+        articleInfo.category
+      );
       articles.push(article);
-  
-      // Ajout automatique dans CATEGORIES
-      const catSlug = normalizeSlug(article.category);
-      if (!CATEGORIES[catSlug]) {
-        CATEGORIES[catSlug] = {
-          name: article.category,
-          slug: catSlug,
-          description: '',
-          count: 1
-        };
-      } else {
-        CATEGORIES[catSlug].count++;
-      }
-  
-    } catch (err) {
-      console.error(`Erreur chargement ${fullPath}`, err);
+    } catch (error) {
+      console.error(`Erreur lors du chargement de l'article ${articleInfo.slug}:`, error);
     }
   }
-  
   
   articlesCache = articles;
   cacheInitialized = true;
@@ -306,7 +277,6 @@ export function getCategories(): CategoryInfo[] {
   return Object.values(CATEGORIES);
 }
 
-export async function getCategoryBySlug(slug: string): CategoryInfo | undefined {
-  await initializeCache();
+export function getCategoryBySlug(slug: string): CategoryInfo | undefined {
   return CATEGORIES[slug];
 }

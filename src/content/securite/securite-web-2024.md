@@ -1,4 +1,3 @@
-
 ---
 title: Sécurité web en 2024 - Guide des bonnes pratiques
 excerpt: Protégez vos applications web contre les menaces actuelles avec ces bonnes pratiques de sécurité essentielles.
@@ -7,7 +6,7 @@ publishDate: 3 Mai 2024
 readTime: 10 min
 category: Securite
 tags: Sécurité, HTTPS, Authentification, Vulnérabilités
-image: /placeholder.svg
+image: placeholder.svg
 ---
 
 # La sécurité web en 2024 : Enjeux et solutions
